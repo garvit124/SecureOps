@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Suspect Records - Security System</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-brand">🔐 Security System - Admin</div>
+        <div class="navbar-menu">
+          <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('manage_users') }}">Manage Users</a>
+          <a href="{{ url_for('register_visitor') }}">Register Visitor</a>
+          <a href="{{ url_for('visitor_logs') }}">Visitor Logs</a>
+          <a href="{{ url_for('add_suspect') }}">Add Suspect</a>
+          <a href="{{ url_for('suspect_records') }}">Suspects</a>
+          <a href="{{ url_for('view_alerts') }}">Alerts</a>
+          <a href="{{ url_for('logout') }}" class="btn-logout"
+            >Logout ({{ session.username }})</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <div class="flex justify-between items-center mb-2">
+        <h1>Suspect Database</h1>
+        <a href="{{ url_for('add_suspect') }}" class="btn btn-danger"
+          >Add New Suspect</a
+        >
+      </div>
+
+      <div class="alert alert-warning">
+        <strong>⚠️ Confidential:</strong> This information is classified and
+        should only be accessed by authorized security personnel.
+      </div>
+
+      <div class="card">
+        <div class="card-header flex justify-between items-center">
+          <span>Active Suspects</span>
+          <input
+            type="text"
+            class="search-input form-control"
+            placeholder="Search suspects..."
+            style="width: 300px"
+          />
+        </div>
+
+        {% if suspects %}
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Last Seen</th>
+                <th>Threat Level</th>
+                <th>Added By</th>
+                <th>Added At</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for suspect in suspects %}
+              <tr>
+                <td>#{{ suspect[0] }}</td>
+                <td><strong>{{ suspect[1] }}</strong></td>
+                <td>{{ suspect[2] }}</td>
+                <td>{{ suspect[3] if suspect[3] else 'Unknown' }}</td>
+                <td>
+                  {% if suspect[4] == 'critical' %}
+                  <span class="badge badge-danger">CRITICAL</span>
+                  {% elif suspect[4] == 'high' %}
+                  <span class="badge badge-danger">HIGH</span>
+                  {% elif suspect[4] == 'medium' %}
+                  <span class="badge badge-warning">MEDIUM</span>
+                  {% else %}
+                  <span class="badge badge-info">LOW</span>
+                  {% endif %}
+                </td>
+                <td>{{ suspect[5] }}</td>
+                <td>{{ suspect[6] }}</td>
+                <td>
+                  {% if suspect[7] == 'active' %}
+                  <span class="badge badge-danger">Active</span>
+                  {% else %}
+                  <span class="badge badge-success">Inactive</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p style="color: var(--text-secondary)">No suspects in database.</p>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <div class="card-header">Threat Level Guide</div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+          "
+        >
+          <div style="padding: 1rem; background: #fee2e2; border-radius: 5px">
+            <strong style="color: #991b1b">CRITICAL</strong>
+            <p style="font-size: 0.875rem; margin-top: 0.5rem; color: #991b1b">
+              Immediate threat - Notify all personnel
+            </p>
+          </div>
+          <div style="padding: 1rem; background: #fee2e2; border-radius: 5px">
+            <strong style="color: #991b1b">HIGH</strong>
+            <p style="font-size: 0.875rem; margin-top: 0.5rem; color: #991b1b">
+              Significant threat - Monitor closely
+            </p>
+          </div>
+          <div style="padding: 1rem; background: #fef3c7; border-radius: 5px">
+            <strong style="color: #92400e">MEDIUM</strong>
+            <p style="font-size: 0.875rem; margin-top: 0.5rem; color: #92400e">
+              Potential threat - Stay alert
+            </p>
+          </div>
+          <div style="padding: 1rem; background: #dbeafe; border-radius: 5px">
+            <strong style="color: #1e40af">LOW</strong>
+            <p style="font-size: 0.875rem; margin-top: 0.5rem; color: #1e40af">
+              Minor concern - General awareness
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

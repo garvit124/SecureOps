@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Security System</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-brand">🔐 Security System - Admin</div>
+        <div class="navbar-menu">
+          <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('manage_users') }}">Manage Users</a>
+          <a href="{{ url_for('register_visitor') }}">Register Visitor</a>
+          <a href="{{ url_for('visitor_logs') }}">Visitor Logs</a>
+          <a href="{{ url_for('add_suspect') }}">Add Suspect</a>
+          <a href="{{ url_for('suspect_records') }}">Suspects</a>
+          <a href="{{ url_for('view_alerts') }}">Alerts</a>
+          <a href="{{ url_for('logout') }}" class="btn-logout"
+            >Logout ({{ session.username }})</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <h1 style="margin-bottom: 2rem">Admin Dashboard</h1>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">👥</div>
+          <div class="stat-content">
+            <h3>{{ active_visitors }}</h3>
+            <p>Active Visitors</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon red">⚠️</div>
+          <div class="stat-content">
+            <h3>{{ active_suspects }}</h3>
+            <p>Active Suspects</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon yellow">🔔</div>
+          <div class="stat-content">
+            <h3>{{ pending_alerts }}</h3>
+            <p>Pending Alerts</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">👤</div>
+          <div class="stat-content">
+            <h3>{{ total_users }}</h3>
+            <p>Total Users</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Recent Alerts</div>
+
+        {% if recent_alerts %}
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Severity</th>
+                <th>Location</th>
+                <th>Created By</th>
+                <th>Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for alert in recent_alerts %}
+              <tr>
+                <td>#{{ alert[0] }}</td>
+                <td>{{ alert[1] }}</td>
+                <td>{{ alert[2] }}</td>
+                <td>
+                  {% if alert[3] == 'high' %}
+                  <span class="badge badge-danger">{{ alert[3]|upper }}</span>
+                  {% elif alert[3] == 'medium' %}
+                  <span class="badge badge-warning">{{ alert[3]|upper }}</span>
+                  {% else %}
+                  <span class="badge badge-info">{{ alert[3]|upper }}</span>
+                  {% endif %}
+                </td>
+                <td>{{ alert[4] }}</td>
+                <td>{{ alert[5] }}</td>
+                <td>{{ alert[6] }}</td>
+                <td>
+                  {% if alert[7] == 0 %}
+                  <span class="badge badge-warning">Pending</span>
+                  {% else %}
+                  <span class="badge badge-success">Resolved</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p style="color: var(--text-secondary)">No alerts recorded yet.</p>
+        {% endif %}
+
+        <div class="mt-2 text-center">
+          <a href="{{ url_for('view_alerts') }}" class="btn btn-primary"
+            >View All Alerts</a
+          >
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Quick Actions</div>
+        <div class="grid-2">
+          <a href="{{ url_for('manage_users') }}" class="btn btn-secondary"
+            >Manage Users</a
+          >
+          <a href="{{ url_for('register_visitor') }}" class="btn btn-primary"
+            >Register New Visitor</a
+          >
+          <a href="{{ url_for('add_suspect') }}" class="btn btn-danger"
+            >Add Suspect</a
+          >
+          <a href="{{ url_for('visitor_logs') }}" class="btn btn-success"
+            >View Visitor Logs</a
+          >
+          <a href="{{ url_for('suspect_records') }}" class="btn btn-warning"
+            >Manage Suspects</a
+          >
+          <a href="{{ url_for('view_alerts') }}" class="btn btn-primary"
+            >View All Alerts</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

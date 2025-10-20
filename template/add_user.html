@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add User - Security System</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-brand">🔐 Security System - Admin</div>
+        <div class="navbar-menu">
+          <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('manage_users') }}">Manage Users</a>
+          <a href="{{ url_for('register_visitor') }}">Register Visitor</a>
+          <a href="{{ url_for('visitor_logs') }}">Visitor Logs</a>
+          <a href="{{ url_for('add_suspect') }}">Add Suspect</a>
+          <a href="{{ url_for('suspect_records') }}">Suspects</a>
+          <a href="{{ url_for('view_alerts') }}">Alerts</a>
+          <a href="{{ url_for('logout') }}" class="btn-logout"
+            >Logout ({{ session.username }})</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <div class="card">
+        <div class="card-header">Add New User</div>
+
+        <form method="POST" action="{{ url_for('add_user') }}">
+          <div class="form-group">
+            <label for="username">Username *</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              class="form-control"
+              required
+              pattern="[a-zA-Z0-9_]+"
+              title="Only letters, numbers, and underscores allowed"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password *</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-control"
+              required
+              minlength="6"
+              title="Password must be at least 6 characters"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="role">User Role *</label>
+            <select id="role" name="role" class="form-control" required>
+              <option value="">Select Role</option>
+              <option value="user">User (Limited Access)</option>
+              <option value="admin">Admin (Full Access)</option>
+            </select>
+          </div>
+
+          <div class="alert alert-info">
+            <strong>ℹ️ Role Permissions:</strong><br />
+            <strong>User:</strong> Can register visitors, view logs, and manage
+            alerts<br />
+            <strong>Admin:</strong> Full access including suspect management and
+            user management
+          </div>
+
+          <div class="flex justify-between items-center mt-2">
+            <a href="{{ url_for('manage_users') }}" class="btn btn-secondary"
+              >Cancel</a
+            >
+            <button type="submit" class="btn btn-primary">Create User</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

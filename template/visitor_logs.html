@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visitor Logs - Security System</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-brand">🔐 Security System</div>
+        <div class="navbar-menu">
+          {% if session.role == 'admin' %}
+          <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('manage_users') }}">Manage Users</a>
+          <a href="{{ url_for('suspect_records') }}">Suspects</a>
+          {% else %}
+          <a href="{{ url_for('user_dashboard') }}">Dashboard</a>
+          {% endif %}
+          <a href="{{ url_for('register_visitor') }}">Register Visitor</a>
+          <a href="{{ url_for('visitor_logs') }}">Visitor Logs</a>
+          <a href="{{ url_for('view_alerts') }}">Alerts</a>
+          <a href="{{ url_for('logout') }}" class="btn-logout"
+            >Logout ({{ session.username }})</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <div class="flex justify-between items-center mb-2">
+        <h1>Visitor Logs</h1>
+        <a href="{{ url_for('register_visitor') }}" class="btn btn-primary"
+          >Register New Visitor</a
+        >
+      </div>
+
+      <div class="card">
+        <div class="card-header flex justify-between items-center">
+          <span>All Visitors</span>
+          <input
+            type="text"
+            class="search-input form-control"
+            placeholder="Search visitors..."
+            style="width: 300px"
+          />
+        </div>
+
+        {% if visitors %}
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Purpose</th>
+                <th>ID Type</th>
+                <th>ID Number</th>
+                <th>Check In</th>
+                <th>Check Out</th>
+                <th>Registered By</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for visitor in visitors %}
+              <tr>
+                <td>#{{ visitor[0] }}</td>
+                <td>{{ visitor[1] }}</td>
+                <td>{{ visitor[2] }}</td>
+                <td>{{ visitor[3] }}</td>
+                <td>{{ visitor[4] }}</td>
+                <td>{{ visitor[5] }}</td>
+                <td>{{ visitor[6] }}</td>
+                <td>{{ visitor[7] if visitor[7] else 'Not checked out' }}</td>
+                <td>{{ visitor[8] }}</td>
+                <td>
+                  {% if visitor[9] == 'checked_in' %}
+                  <span class="badge badge-success">Checked In</span>
+                  {% else %}
+                  <span class="badge badge-info">Checked Out</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if visitor[9] == 'checked_in' %}
+                  <a
+                    href="{{ url_for('checkout_visitor', visitor_id=visitor[0]) }}"
+                    class="btn btn-sm btn-warning"
+                    data-confirm="Check out this visitor?"
+                  >
+                    Check Out
+                  </a>
+                  {% else %}
+                  <span style="color: var(--text-secondary)">Completed</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p style="color: var(--text-secondary)">No visitors registered yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

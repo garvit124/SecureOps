@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Suspect - Security System</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-brand">🔐 Security System - Admin</div>
+        <div class="navbar-menu">
+          <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('manage_users') }}">Manage Users</a>
+          <a href="{{ url_for('register_visitor') }}">Register Visitor</a>
+          <a href="{{ url_for('visitor_logs') }}">Visitor Logs</a>
+          <a href="{{ url_for('add_suspect') }}">Add Suspect</a>
+          <a href="{{ url_for('suspect_records') }}">Suspects</a>
+          <a href="{{ url_for('view_alerts') }}">Alerts</a>
+          <a href="{{ url_for('logout') }}" class="btn-logout"
+            >Logout ({{ session.username }})</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <div class="card">
+        <div class="card-header">Add Suspect to Database</div>
+
+        <form method="POST" action="{{ url_for('add_suspect') }}">
+          <div class="form-group">
+            <label for="name">Suspect Name *</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="description"
+              >Description / Identifying Features *</label
+            >
+            <textarea
+              id="description"
+              name="description"
+              class="form-control"
+              required
+              rows="4"
+              placeholder="Physical description, identifying marks, clothing, etc."
+            ></textarea>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="last_seen">Last Seen Location</label>
+              <input
+                type="text"
+                id="last_seen"
+                name="last_seen"
+                class="form-control"
+                placeholder="e.g., Main Entrance, Building A"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="threat_level">Threat Level *</label>
+              <select
+                id="threat_level"
+                name="threat_level"
+                class="form-control"
+                required
+              >
+                <option value="">Select Threat Level</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="critical">Critical</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="alert alert-warning">
+            <strong>⚠️ Warning:</strong> This information will be added to the
+            suspect database and flagged for all security personnel.
+          </div>
+
+          <div class="flex justify-between items-center mt-2">
+            <a href="{{ url_for('suspect_records') }}" class="btn btn-secondary"
+              >Cancel</a
+            >
+            <button type="submit" class="btn btn-danger">
+              Add to Suspect Database
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

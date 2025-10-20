@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register Visitor - Security System</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-brand">🔐 Security System</div>
+        <div class="navbar-menu">
+          {% if session.role == 'admin' %}
+          <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('manage_users') }}">Manage Users</a>
+          <a href="{{ url_for('suspect_records') }}">Suspects</a>
+          {% else %}
+          <a href="{{ url_for('user_dashboard') }}">Dashboard</a>
+          {% endif %}
+          <a href="{{ url_for('register_visitor') }}">Register Visitor</a>
+          <a href="{{ url_for('visitor_logs') }}">Visitor Logs</a>
+          <a href="{{ url_for('view_alerts') }}">Alerts</a>
+          <a href="{{ url_for('logout') }}" class="btn-logout"
+            >Logout ({{ session.username }})</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <div class="card">
+        <div class="card-header">Register New Visitor</div>
+
+        <form method="POST" action="{{ url_for('register_visitor') }}">
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="name">Full Name *</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="form-control"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="contact">Contact Number *</label>
+              <input
+                type="tel"
+                id="contact"
+                name="contact"
+                class="form-control"
+                required
+                placeholder="+91XXXXXXXXXX"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="purpose">Purpose of Visit *</label>
+            <textarea
+              id="purpose"
+              name="purpose"
+              class="form-control"
+              required
+            ></textarea>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="id_type">ID Type *</label>
+              <select id="id_type" name="id_type" class="form-control" required>
+                <option value="">Select ID Type</option>
+                <option value="Aadhar Card">Aadhar Card</option>
+                <option value="PAN Card">PAN Card</option>
+                <option value="Driving License">Driving License</option>
+                <option value="Passport">Passport</option>
+                <option value="Voter ID">Voter ID</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="id_number">ID Number *</label>
+              <input
+                type="text"
+                id="id_number"
+                name="id_number"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center mt-2">
+            <a href="{{ url_for('visitor_logs') }}" class="btn btn-secondary"
+              >Cancel</a
+            >
+            <button type="submit" class="btn btn-primary">
+              Register Visitor
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>
